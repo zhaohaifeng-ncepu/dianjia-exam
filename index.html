@@ -433,16 +433,29 @@ $('agree-checkbox').addEventListener('change', function() {
   $('btn-start-exam').disabled = !this.checked;
 });
 
+// ==================== 通用提示（替代alert，兼容手机） ====================
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.id = 'toast-msg';
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:' +
+    (type === 'error' ? '#ff4d4f' : type === 'warn' ? '#faad14' : '#1677ff') +
+    ';color:#fff;padding:14px 28px;border-radius:10px;font-size:15px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:80%;text-align:center';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 2500);
+}
+
 // ==================== 开始考试 ====================
 function startExam() {
   const name = $('reg-name').value.trim();
   const id = $('reg-id').value.trim();
-  const dept = $('reg-dept').value.trim();
-  if (!name || !id || !dept || !team) { alert('请填写完整的个人信息'); return; }
+  const dept = $('reg-dept').value;
+  const team = $('reg-team').value.trim();
+  if (!name || !id || !dept || !team) { showToast('请填写完整的个人信息！', 'error'); return; }
 
   // 检查题库
   const allQ = loadAllQuestions();
-  if (allQ.length === 0) { alert('题库为空，请联系管理员导入题库！'); return; }
+  if (allQ.length === 0) { showToast('题库为空，请联系管理员导入题库！', 'error'); return; }
 
   STATE.userInfo = { name, id, dept, team };
   STATE.questions = generateExamPaper(allQ);
@@ -665,7 +678,7 @@ function startTimer() {
     updateTimerDisplay();
     if (STATE.remainSeconds <= 0) {
       clearInterval(STATE.timerInterval);
-      alert('考试时间到，系统将自动提交试卷！');
+      showToast('考试时间到，系统将自动提交试卷！', 'warn');
       submitExam();
     }
   }, 1000);
@@ -715,7 +728,7 @@ function showCheatWarning() {
   if (STATE.cheatCount >= 3) {
     setTimeout(() => {
       closeCheatWarning();
-      alert('切屏次数超过3次，系统将自动提交试卷！');
+      showToast('切屏超过3次，系统将自动提交试卷！', 'error');
       submitExam();
     }, 2000);
   }
@@ -858,7 +871,7 @@ function showAnswerDetail() {
 
   // 需要从最后一次考试结果获取 detail
   const lastResult = STATE.results[STATE.results.length - 1];
-  if (!lastResult || !lastResult.detail) { alert('暂无答题详情'); return; }
+  if (!lastResult || !lastResult.detail) { showToast('暂无答题详情', 'warn'); return; }
 
   let html = '<h3 style="margin:20px 0 16px">答题详情</h3>';
   lastResult.detail.forEach((d, idx) => {
@@ -1005,7 +1018,7 @@ function adminLogin() {
     renderQuestionList();
     renderResultList();
   } else {
-    alert('密码错误！');
+      alert('密码错误！');
   }
 }
 
@@ -1143,7 +1156,7 @@ function handleImportedQuestionsFromXlsx(rows) {
   saveAllQuestions(questions);
   $('question-import-config').style.display = 'block';
   renderQuestionList();
-  alert(`成功导入 ${questions.length} 道题！\n题型分布：单选 ${questions.filter(q=>q.type==='single').length} / 多选 ${questions.filter(q=>q.type==='multi').length} / 判断 ${questions.filter(q=>q.type==='judge').length} / 填空 ${questions.filter(q=>q.type==='fill').length}`);
+  showToast(`成功导入 ${questions.length} 道题！\n题型分布：单选 ${questions.filter(q=>q.type==='single').length} / 多选 ${questions.filter(q=>q.type==='multi').length} / 判断 ${questions.filter(q=>q.type==='judge').length} / 填空 ${questions.filter(q=>q.type==='fill').length}`, 'success');
 }
 
 function mapType(typeRaw) {
