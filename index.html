@@ -254,6 +254,28 @@ h3{font-size:17px;color:#555;margin-bottom:10px}
 </div>
 
 <!-- ==================== 修改密码弹窗 ==================== -->
+<div id="change-pwd-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:32px;width:380px">
+    <h3 style="margin-bottom:16px">修改管理员密码</h3>
+    <div class="form-group">
+      <label>当前密码</label>
+      <input type="password" id="old-pwd" placeholder="请输入当前密码">
+    </div>
+    <div class="form-group">
+      <label>新密码</label>
+      <input type="password" id="new-pwd" placeholder="请输入新密码（至少4位）">
+    </div>
+    <div class="form-group">
+      <label>确认新密码</label>
+      <input type="password" id="new-pwd2" placeholder="请再次输入新密码">
+    </div>
+    <div id="pwd-tip" style="font-size:13px;margin-bottom:12px"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" onclick="doChangePwd()">确认修改</button>
+      <button class="btn btn-outline" onclick="closeChangePwd()">取消</button>
+    </div>
+  </div>
+</div>
 
 <!-- ==================== 5. 管理后台页 ==================== -->
 <div id="page-admin" class="page">
